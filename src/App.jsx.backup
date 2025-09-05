@@ -1,0 +1,45 @@
+
+
+
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import AppRoutes from './routes/AppRoutes';
+
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    setUserRole(userData.role);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setUserRole(null);
+    localStorage.removeItem('user');
+  };
+
+  // Check for stored user data on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      setUser(userData);
+      setUserRole(userData.role);
+    }
+  }, []);
+
+  return (
+    <Router>
+      <Navbar userRole={userRole} onLogout={handleLogout} user={user} />
+      <div className="flex min-h-screen bg-gray-50 pt-16">
+        <div className="flex-1">
+          <AppRoutes user={user} />
+        </div>
+      </div>
+    </Router>
+  );
+} 
